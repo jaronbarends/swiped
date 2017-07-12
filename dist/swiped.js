@@ -41,6 +41,7 @@
         'transform': prefix + 'transform'
     };
 
+    // delegate events to the document element
     function delegate(event, cbName) {
         document.addEventListener(event, function(e) {
             Swiped._elems.forEach(function(Swiped){
@@ -83,7 +84,8 @@
             time: 200,
             dir: 1,
             right: 0,
-            left: 0
+            left: 0,
+            willOpenClass: 'js-swiped--will-open'
         };
 
         o = extend(defaultOptions, o || {});
@@ -100,6 +102,8 @@
         
         this.onOpen = typeof o.onOpen === 'function' ? o.onOpen : fn;
         this.onClose = typeof o.onClose === 'function' ? o.onClose : fn;
+
+        this.willOpenClass = o.willOpenClass;
 
         this.right = o.right;
         this.left = o.left;
@@ -181,6 +185,8 @@
         this.y = touch.pageY;
         this.startTime = new Date();
 
+        this.willOpen = false;
+
         this.resetValue();
 
         if (this.list) {
@@ -210,6 +216,7 @@
 
             //prevent scroll
             e.preventDefault();
+
         }
     };
 
@@ -249,6 +256,8 @@
     Swiped.prototype.close = function(isForce) {
         this.animation(0);
         this.swiped = false;
+        this.willOpen = false;
+        this.elem.classList.remove(this.willOpenClass);
 
         if (!isForce) {
             this.transitionEnd(this.elem, this.onClose);
@@ -257,6 +266,9 @@
         this.resetValue();
     };
 
+    /**
+     * Toggle current object's open/closed state
+     */
     Swiped.prototype.toggle = function() {
         if (this.swiped) {
             this.close();
@@ -274,6 +286,10 @@
         this.delta = 0;
     };
 
+
+    /**
+     * Bind touchMove, touchEnd and touchStart events
+     */
     Swiped._bindEvents = function() {
         if (Swiped.eventBinded) {
             return false;
@@ -290,7 +306,7 @@
      * detect of the user action: swipe or scroll
      */
     Swiped.prototype.defineUserAction = function(touch) {
-        var DELTA_X = 10;
+        var DELTA_X = 10;// threshold
         var DELTA_Y = 10;
 
         if (Math.abs(this.y - touch.pageY) > DELTA_Y && !this.startSwipe) {
@@ -324,6 +340,18 @@
         if (deltaAbs > this.width) {
             // linear deceleration
             this.delta = this.dir * (this.width + (deltaAbs - this.width) / 8);
+        }
+
+        if (this.dir * this.delta > this.tolerance) {
+            if (!this.willOpen) {
+                this.willOpen = true;
+                this.elem.classList.add(this.willOpenClass);
+            }
+        } else {
+            if (this.willOpen) {
+                this.willOpen = false;
+                this.elem.classList.remove(this.willOpenClass);
+            }
         }
 
         this.animation(this.delta, 0);

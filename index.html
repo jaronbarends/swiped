@@ -22,12 +22,29 @@
         }
         
         ul {
+            overflow: hidden;
             margin: 0 0 10px;
             padding: 0;
         }
         
         .list1 li {
+            position: relative;
             background: #f58160;
+        }
+        .list1 li::after {
+            position: absolute;
+            display: block;
+            content: 'delete';
+            width: 100%;
+            top: 0;
+            left: 100%;
+            height: 100%;
+            padding-left: 1em;
+            background: #e0e0e0;
+            transition: background 300ms;
+        }
+        .list1 li.js-swiped--will-open::after {
+            background: #7b0000;
         }
         .list2 li {
             background: #f9b15e;
