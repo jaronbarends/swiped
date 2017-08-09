@@ -85,7 +85,9 @@
             dir: 1,
             right: 0,
             left: 0,
-            willOpenClass: 'js-swiped--will-open'
+            willOpenClass: 'js-swiped--will-open',
+            willOpenRightClass: 'js-swiped--will-open-right',
+            willOpenLeftClass: 'js-swiped--will-open-left'
         };
 
         o = extend(defaultOptions, o || {});
@@ -104,6 +106,8 @@
         this.onClose = typeof o.onClose === 'function' ? o.onClose : fn;
 
         this.willOpenClass = o.willOpenClass;
+        this.willOpenRightClass = o.willOpenRightClass;
+        this.willOpenLeftClass = o.willOpenLeftClass;
 
         this.right = o.right;
         this.left = o.left;
@@ -256,8 +260,7 @@
     Swiped.prototype.close = function(isForce) {
         this.animation(0);
         this.swiped = false;
-        this.willOpen = false;
-        this.elem.classList.remove(this.willOpenClass);
+        this.elem.classList.remove(this.willOpenClass, this.willOpenRightClass, this.willOpenLeftClass);
 
         if (!isForce) {
             this.transitionEnd(this.elem, this.onClose);
@@ -345,12 +348,16 @@
         if (this.dir * this.delta > this.tolerance) {
             if (!this.willOpen) {
                 this.willOpen = true;
-                this.elem.classList.add(this.willOpenClass);
+                let willOpenDirectionClass = this.willOpenLeftClass;
+                if (this.dir === 1) {
+                    willOpenDirectionClass = this.willOpenRightClass;
+                }
+                this.elem.classList.add(this.willOpenClass, willOpenDirectionClass);
             }
         } else {
             if (this.willOpen) {
                 this.willOpen = false;
-                this.elem.classList.remove(this.willOpenClass);
+                this.elem.classList.remove(this.willOpenClass, this.willOpenRightClass, this.willOpenLeftClass);
             }
         }
 

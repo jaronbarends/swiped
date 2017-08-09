@@ -38,6 +38,9 @@ bower install swiped
 - `[options.list]` (boolean) - Elements depend on each other. Default: `false`.
 - `[options.onOpen]` (function).
 - `[options.onClose]` (function).
+- `[options.willOpenClass]` (string) - Class added to element when it will open. Default: js-swiped--will-open
+- `[options.willOpenRightClass]` (string) - Class added to element when it will open and is being swiped right. Default: js-swiped--will-open-right
+- `[options.willOpenLeftClass]` (string) - Class added to element when it will open and is being swiped left. Default: js-swiped--will-open-left
 
 
 ```js
